@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Empresa — GBS Serviços</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:system-ui,sans-serif;background:#fff}
+
+.page{position:relative;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.img-wrap{position:relative;display:inline-block;max-width:100%;max-height:100%}
+.img-wrap img{display:block;max-width:100vw;max-height:100vh;width:auto;height:auto}
+
+.nav-overlay{position:absolute;top:1%;right:0;display:flex;align-items:center;gap:1vw;padding-right:2vw}
+.nav-overlay a{color:#1a4a1a;text-decoration:none;font-size:.85vw;font-weight:500}
+.nav-overlay a.ativo{font-weight:700;border-bottom:2px solid #1a4a1a}
+.nav-overlay a:hover{text-decoration:underline}
+.nav-overlay .btn-link{font-weight:700;border:2px solid #1a4a1a;padding:.4vw 1.1vw;border-radius:6px;text-decoration:none}
+.nav-overlay .btn-link:hover{background:#1a4a1a;color:#fff}
+
+.voltar{position:absolute;top:1%;left:2vw;color:#1a4a1a;text-decoration:none;font-size:.85vw;font-weight:500}
+.voltar:hover{text-decoration:underline}
+
+@media(max-width:700px){
+  .img-wrap{width:100vw;height:100vh;max-width:100vw;max-height:100vh}
+  .img-wrap img{width:100%;height:100%;max-width:100vw;max-height:100vh;object-fit:cover;object-position:top}
+  .nav-overlay{gap:10px;padding-right:10px;top:8px}
+  .nav-overlay a{font-size:11px}
+  .nav-overlay .btn-link{padding:5px 10px}
+  .voltar{top:8px;left:10px;font-size:11px}
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+  <a class="voltar" href="index.html">← Início</a>
+  <div class="img-wrap">
+    <picture>
+      <source media="(max-width:700px)" srcset="empresa_mobile.png">
+      <img src="empresa.png" alt="A Empresa GBS Serviços — Qualidade com Segurança é o nosso forte. Valores: Ética, Integridade, Rendimento, Empreendimento. Negócio: satisfazer a demanda na prestação de serviços com qualidade e segurança. Visão: ser referência na prestação de serviços. Missão: ser líder no setor, atuando com segurança, eficiência e responsabilidade social.">
+    </picture>
+    <div class="nav-overlay">
+      <a class="ativo" href="empresa.html">A empresa</a>
+      <a href="#">Segurança</a>
+      <a class="btn-link" href="#">Leiturista</a>
+      <a class="btn-link" href="/controles/teste/index.html?logout=1">Controles</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
