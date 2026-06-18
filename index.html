@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GBS Serviços Empresariais</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden}
@@ -28,6 +29,22 @@ body{font-family:system-ui,sans-serif;background:#fff}
   .nav-overlay a{font-size:11px}
   .nav-overlay .btn-link{padding:5px 10px}
 }
+
+/* MODAL LOGIN */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.vis{opacity:1;pointer-events:all}
+.modal{background:#fff;border-radius:14px;padding:32px;width:360px;max-width:95vw;position:relative}
+.modal-title{font-size:18px;font-weight:500;color:#1a2a1a;margin-bottom:4px}
+.modal-sub{font-size:13px;color:#4a7a4a;margin-bottom:24px}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:11px;color:#4a7a4a;margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px}
+.form-group input{width:100%;border:0.5px solid #a0c8a0;border-radius:6px;padding:8px 12px;font-size:13px;background:#f8fbf8;color:#1a2a1a;outline:none;transition:border .15s}
+.form-group input:focus{border-color:#2d7a2d}
+.btn-login{width:100%;background:#2d7a2d;color:#fff;border:none;padding:10px;border-radius:6px;font-size:14px;font-weight:500;cursor:pointer;margin-top:6px;transition:background .15s}
+.btn-login:hover{background:#1a5a1a}
+.btn-login:disabled{background:#90c090;cursor:not-allowed}
+.login-erro{font-size:12px;color:#a32d2d;margin-top:8px;min-height:16px}
+.modal-close{position:absolute;top:14px;right:16px;background:none;border:none;font-size:20px;color:#4a7a4a;cursor:pointer;line-height:1}
 </style>
 </head>
 <body>
@@ -42,10 +59,65 @@ body{font-family:system-ui,sans-serif;background:#fff}
       <a href="#">A empresa</a>
       <a href="#">Segurança</a>
       <a class="btn-link" href="#">Leiturista</a>
-      <a class="btn-link" href="/controles/teste/index.html?logout=1">Controles</a>
+      <a class="btn-link" href="/controles/teste/index.html" onclick="abrirLogin(event)">Controles</a>
     </div>
   </div>
 </div>
+
+<!-- MODAL LOGIN -->
+<div class="modal-overlay" id="modal-overlay" onclick="fecharLoginFora(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharLogin()">×</button>
+    <div class="modal-title">Acessar controles</div>
+    <div class="modal-sub">Entre com seu e-mail e senha para continuar.</div>
+    <div class="form-group">
+      <label>E-mail</label>
+      <input type="email" id="inp-email" placeholder="seu@email.com" onkeydown="if(event.key==='Enter')fazerLogin()">
+    </div>
+    <div class="form-group">
+      <label>Senha</label>
+      <input type="password" id="inp-senha" placeholder="••••••••" onkeydown="if(event.key==='Enter')fazerLogin()">
+    </div>
+    <button class="btn-login" id="btn-login" onclick="fazerLogin()">Entrar</button>
+    <div class="login-erro" id="login-erro"></div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL='https://ndwivbhqglpnfyqwjbzu.supabase.co';
+const SUPABASE_KEY='sb_publishable_IhuNziyT5VYrMKRixcPGjA_LAn5ku-7';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+async function abrirLogin(e){
+  if(e) e.preventDefault();
+  // garante que sempre pede credenciais novas, mesmo com sessão antiga salva
+  await sb.auth.signOut();
+  document.getElementById('modal-overlay').classList.add('vis');
+  setTimeout(()=>document.getElementById('inp-email').focus(),100);
+}
+function fecharLogin(){document.getElementById('modal-overlay').classList.remove('vis');}
+function fecharLoginFora(e){if(e.target===document.getElementById('modal-overlay'))fecharLogin();}
+
+async function fazerLogin(){
+  const email=document.getElementById('inp-email').value.trim();
+  const senha=document.getElementById('inp-senha').value;
+  const erro=document.getElementById('login-erro');
+  const btn=document.getElementById('btn-login');
+  if(!email||!senha){erro.textContent='Preencha e-mail e senha.';return;}
+  btn.disabled=true;btn.textContent='Entrando...';erro.textContent='';
+  const {error}=await sb.auth.signInWithPassword({email,password:senha});
+  if(error){
+    erro.textContent='E-mail ou senha incorretos.';
+    btn.disabled=false;btn.textContent='Entrar';
+    return;
+  }
+  const {data:{user}}=await sb.auth.getUser();
+  if(user){
+    await sb.from('usuarios_portal').update({last_login:new Date().toISOString()}).eq('id',user.id);
+  }
+  window.location.href='/controles/teste/index.html';
+}
+</script>
 
 </body>
 </html>
